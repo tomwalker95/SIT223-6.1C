@@ -8,7 +8,7 @@ pipeline {
     stages {
             stage('Build') {
                 steps {
-                    echo 'fetch the source code from' $DIRECTORY_PATH
+                    echo 'fetch the source code from' ${DIRECTORY_PATH}
                     echo 'compile the code and generate any necessary artifacts'
                 }
             }
@@ -35,7 +35,7 @@ pipeline {
 
             stage('Deploy to Production') {
                 steps {
-                    echo 'Deploy to'$PRODUCTION_ENVIRONMENT
+                    echo 'Deploy to'${PRODUCTION_ENVIRONMENT}
                 }
             }
     }
