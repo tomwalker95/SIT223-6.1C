@@ -38,4 +38,73 @@ pipeline {
                         subject: 'Unit and Integration Tests status email',
                         body: 'Testing was successful'
                 }
-  
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                script {
+                    sh """
+                        echo "Checking code quality..." >> build.log
+                    """
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                script {
+                    sh """
+                        echo "Running security scans..." >> build.log
+                    """
+                }
+            }
+            post {
+                success {
+                    emailext to: 'tomwalker458@gmail.com',
+                        subject: 'Security Scan Status',
+                        body: 'Security Scan Successful'
+                }
+                failure {
+                    emailext to: 'tomwalker458@gmail.com',
+                        subject: 'Security Scan Status',
+                        body: 'Security Scan failed'
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                script {
+                    sh """
+                        sleep 10
+                        echo "Integration tests completed..." >> build.log
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                script {
+                    sh """
+                        echo "Deploying to ${PRODUCTION_ENVIRONMENT}..." >> build.log
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive the log file generated during the pipeline execution
+            archiveArtifacts artifacts: 'build.log', allowEmptyArchive: true
+
+            // Send the email with the log file as an attachment
+            emailext body: 'Stage Complete. Please find the attached logs.',
+                subject: 'Build Logs',
+                to: 'tomwalker458@gmail.com',
+                attachmentsPattern: 'build.log'
+        }
+    }
+}
