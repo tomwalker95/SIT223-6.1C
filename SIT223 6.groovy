@@ -80,7 +80,7 @@ pipeline {
             archiveArtifacts artifacts: 'build.log', allowEmptyArchive: true
 
             // Send email with logs as attachment
-            mail body: 'Pipeline Logs. Please find the attached logs.',
+            emailext body: 'Pipeline Logs. Please find the attached logs.',
                 subject: 'Build Logs',
                 to: 'tomwalker458@gmail.com',
                 attachmentsPattern: 'build.log'
