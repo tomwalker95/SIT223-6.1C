@@ -8,8 +8,12 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "fetch the source code from ${DIRECTORY_PATH}"
-                echo 'compile the code and generate any necessary artifacts'
+                script {
+                    sh """
+                        echo "fetch the source code from ${DIRECTORY_PATH}" >> build.log
+                        echo "compile the code and generate any necessary artifacts" >> build.log
+                    """
+                }
             }
             post {
                 success {
@@ -22,7 +26,11 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'unit and integration tests'
+                script {
+                    sh """
+                        echo "Running unit and integration tests..." >> build.log
+                    """
+                }
             }
             post {
                 success {
@@ -35,13 +43,21 @@ pipeline {
 
         stage('Code Analysis') {
             steps {
-                echo 'Check the quality of the code'
+                script {
+                    sh """
+                        echo "Checking code quality..." >> build.log
+                    """
+                }
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Run security scans on the code'
+                script {
+                    sh """
+                        echo "Running security scans..." >> build.log
+                    """
+                }
             }
             post {
                 success {
@@ -59,33 +75,15 @@ pipeline {
 
         stage('Integration Tests') {
             steps {
-                sleep 10
+                script {
+                    sh """
+                        sleep 10
+                        echo "Integration tests completed..." >> build.log
+                    """
+                }
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo "Deploy to ${PRODUCTION_ENVIRONMENT}"
-            }
-        }
-    }
-
-    post {
-        always {
-            // Write the console log to a file
-            script {
-                def logFile = 'build.log'
-                writeFile file: logFile, text: currentBuild.getLog().join('\n')
-            }
-
-            // Archive the console log
-            archiveArtifacts artifacts: 'build.log', allowEmptyArchive: true
-
-            // Send the email with the console log as an attachment
-            emailext body: 'Stage Complete. Please find the attached logs.',
-                subject: 'Build Logs',
-                to: 'tomwalker458@gmail.com',
-                attachmentsPattern: 'build.log'
-        }
-    }
-}
+                scri
