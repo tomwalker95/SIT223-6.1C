@@ -72,16 +72,20 @@ pipeline {
 
     post {
         always {
-            // Archive the full console log automatically
-            archiveArtifacts artifacts: '**/build.log', allowEmptyArchive: true
+            // Write the console log to a file
+            script {
+                def logFile = 'build.log'
+                writeFile file: logFile, text: currentBuild.getLog().join('\n')
+            }
 
-            // Send email with the console log as attachment
+            // Archive the console log
+            archiveArtifacts artifacts: 'build.log', allowEmptyArchive: true
+
+            // Send the email with the console log as an attachment
             emailext body: 'Stage Complete. Please find the attached logs.',
                 subject: 'Build Logs',
                 to: 'tomwalker458@gmail.com',
-                attachmentsPattern: '**/build.log'
+                attachmentsPattern: 'build.log'
         }
     }
 }
-
-
