@@ -13,7 +13,7 @@ pipeline {
             }
             post {
                 success {
-                    mail to: 'tomwalker458@gmail.com',
+                    emailext to: 'tomwalker458@gmail.com',
                         subject: 'Build status email',
                         body: 'Build was successful'
                 }
@@ -26,7 +26,7 @@ pipeline {
             }
             post {
                 success {
-                    mail to: 'tomwalker458@gmail.com',
+                    emailext to: 'tomwalker458@gmail.com',
                         subject: 'Unit and Integration Tests status email',
                         body: 'Testing was successful'
                 }
@@ -45,12 +45,12 @@ pipeline {
             }
             post {
                 success {
-                    mail to: 'tomwalker458@gmail.com',
+                    emailext to: 'tomwalker458@gmail.com',
                         subject: 'Security Scan Status',
                         body: 'Security Scan Successful'
                 }
                 failure {
-                    mail to: 'tomwalker458@gmail.com',
+                    emailext to: 'tomwalker458@gmail.com',
                         subject: 'Security Scan Status',
                         body: 'Security Scan failed'
                 }
@@ -72,18 +72,16 @@ pipeline {
 
     post {
         always {
-            // Archive the logs (console output)
-            script {
-                def logFile = 'build.log'
-                sh "cat ${env.WORKSPACE}/logs/console.log > ${logFile}"
-            }
-            archiveArtifacts artifacts: 'build.log', allowEmptyArchive: true
+            // Archive the full console log automatically
+            archiveArtifacts artifacts: '**/build.log', allowEmptyArchive: true
 
-            // Send email with logs as attachment
-            emailext body: 'Pipeline Logs. Please find the attached logs.',
+            // Send email with the console log as attachment
+            emailext body: 'Stage Complete. Please find the attached logs.',
                 subject: 'Build Logs',
                 to: 'tomwalker458@gmail.com',
-                attachmentsPattern: 'build.log'
+                attachmentsPattern: '**/build.log'
         }
     }
 }
+
+
